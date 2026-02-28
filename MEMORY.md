@@ -70,3 +70,19 @@ When a mistake is corrected, append a `[LEARN:category]` entry below.
 [LEARN:meta] Dogfooding principles must be enforced: plan-first, spec-then-plan, quality gates, session logs → we follow our own guide.
 
 [LEARN:meta] Template development work (building infrastructure, docs) doesn't create session logs in quality_reports/ → those are for user work (slides, analysis), not meta-work. Keeps template clean for users who fork.
+
+## HEP Paper Workflow
+
+[LEARN:hep] Reviewer response workflow: read manuscript .tex → parse reviewer comments by point → draft Markdown response_draft.md → optionally compile response_letter.tex → verify with hep-domain-reviewer agent. Use /reviewer-response skill.
+
+[LEARN:hep] INSPIRE-HEP citation format: Author:YYYYidentifier (CMS:2023abc, ATLAS:2022xyz). PDG: ParticleDataGroup:2022pth. Always use in papers/ directory.
+
+[LEARN:hep] Uncertainty standard: N ± stat ± syst — always separate. Luminosity reported separately as ±X% (lumi). Never combine without explicit (stat ⊕ syst).
+
+[LEARN:hep] Journal page limits: PRL=4 pages (tight, no subsections in intro), PLB~6 pages, JHEP/PRD/EPJC open-ended with full systematic tables.
+
+[LEARN:hep] Reviewer etiquette: open with acknowledgment; never deflect without justification; always give exact page/line/equation refs for manuscript changes; include complete change log table.
+
+[LEARN:files] HEP papers live in papers/[paper-slug]/ with subdirectories: manuscript/ (source .tex), reviewer_comments/ (raw referee reports), responses/ (generated Markdown + LaTeX).
+
+[LEARN:workflow] For HEP paper domain review: use hep-domain-reviewer agent (not generic domain-reviewer). Checks 5 HEP-specific lenses: physics correctness, assumption transparency, citation completeness, claim-evidence alignment, response quality.

@@ -5,7 +5,7 @@
      Keep this file under ~150 lines — Claude loads it every session.
      See the guide at docs/workflow-guide.html for full documentation. -->
 
-**Project:** [YOUR PROJECT NAME]
+**Project:** HEP Research Papers and Reviewer Responses
 **Institution:** [YOUR INSTITUTION]
 **Branch:** main
 
@@ -15,7 +15,7 @@
 
 - **Plan first** -- enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
 - **Verify after** -- compile/render and confirm output at the end of every task
-- **Single source of truth** -- Beamer `.tex` is authoritative; Quarto `.qmd` derives from it
+- **Single source of truth** -- Manuscript `.tex` is authoritative; reviewer responses derive from it
 - **Quality gates** -- nothing ships below 80/100
 - **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to MEMORY.md
 
@@ -32,6 +32,7 @@
 ├── Preambles/header.tex         # LaTeX headers
 ├── Slides/                      # Beamer .tex files
 ├── Quarto/                      # RevealJS .qmd files + theme
+├── papers/                      # Per-paper: manuscript/, reviewer_comments/, responses/
 ├── docs/                        # GitHub Pages (auto-generated)
 ├── scripts/                     # Utility scripts + R code
 ├── quality_reports/             # Plans, session logs, merge reports
@@ -92,6 +93,7 @@ python scripts/quality_score.py Quarto/file.qmd
 | `/research-ideation [topic]` | Research questions + strategies |
 | `/interview-me [topic]` | Interactive research interview |
 | `/review-paper [file]` | Manuscript review |
+| `/reviewer-response [paper-dir]` | Draft point-by-point reviewer response |
 | `/data-analysis [dataset]` | End-to-end R analysis |
 | `/learn [skill-name]` | Extract discovery into persistent skill |
 | `/context-status` | Show session health + context usage |
@@ -99,38 +101,22 @@ python scripts/quality_score.py Quarto/file.qmd
 
 ---
 
-<!-- CUSTOMIZE: Replace the example entries below with your own
-     Beamer environments and Quarto CSS classes. These are examples
-     from the original project — delete them and add yours. -->
+## HEP Conventions Quick Reference
 
-## Beamer Custom Environments
-
-| Environment       | Effect        | Use Case       |
-|-------------------|---------------|----------------|
-| `[your-env]`      | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `keybox` | Gold background box | Key points |
-| `highlightbox` | Gold left-accent box | Highlights |
-| `definitionbox[Title]` | Blue-bordered titled box | Formal definitions |
--->
-
-## Quarto CSS Classes
-
-| Class              | Effect        | Use Case       |
-|--------------------|---------------|----------------|
-| `[.your-class]`    | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `.smaller` | 85% font | Dense content slides |
-| `.positive` | Green bold | Good annotations |
--->
+| Convention | Standard | Example |
+|------------|----------|---------|
+| Kinematics | `p_T`, `\eta` (pseudorapidity), `y` (rapidity) — never conflate | `$p_T > 30~\GeV$, $|\eta| < 2.5$` |
+| Uncertainty | `N ± stat ± syst` — always separate; lumi separate | `$12.3 \pm 0.4 \pm 1.1 \pm 0.3~\text{pb}$` |
+| Citation keys | INSPIRE format `Author:YYYYid` | `CMS:2023abc`, `Cacciari:2008gp` |
+| Required refs | PDG, FastJet, anti-kt, generator papers | See `.claude/rules/hep-paper-standards.md` |
+| Jet algorithm | Anti-kt; always state radius parameter | `anti-$k_t$, $R=0.4$` |
+| Units | Roman text in math mode; use `hepunits` package | `\GeV`, `\TeV`, `\fb` |
+| Limits | Always: 95% CL, CLs method, obs + exp ± 1σ, ± 2σ | — |
 
 ---
 
 ## Current Project State
 
-| Lecture | Beamer | Quarto | Key Content |
-|---------|--------|--------|-------------|
-| 1: [Topic] | `Lecture01_Topic.tex` | `Lecture1_Topic.qmd` | [Brief description] |
-| 2: [Topic] | `Lecture02_Topic.tex` | -- | [Brief description] |
+| Paper | Directory | Journal | Status |
+|-------|-----------|---------|--------|
+| *(add papers here)* | `papers/[slug]/` | — | — |
