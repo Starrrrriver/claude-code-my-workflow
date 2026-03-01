@@ -16,7 +16,7 @@
 - **Plan first** -- enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
 - **Verify after** -- compile/render and confirm output at the end of every task
 - **Single source of truth** -- Manuscript `.tex` is authoritative; reviewer responses derive from it
-- **Quality gates** -- nothing ships below 80/100
+- **Quality gates** -- nothing ships below 90/100 (high bar for publication)
 - **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to MEMORY.md
 
 ---
@@ -27,18 +27,15 @@
 [YOUR-PROJECT]/
 ├── CLAUDE.MD                    # This file
 ├── .claude/                     # Rules, skills, agents, hooks
-├── Bibliography_base.bib        # Centralized bibliography
+├── Bibliography_base.bib        # Centralized bibliography (optional)
 ├── Figures/                     # Figures and images
-├── Preambles/header.tex         # LaTeX headers
-├── Slides/                      # Beamer .tex files
-├── Quarto/                      # RevealJS .qmd files + theme
 ├── papers/                      # Per-paper: manuscript/, reviewer_comments/, responses/
-├── docs/                        # GitHub Pages (auto-generated)
+├── docs/                        # GitHub Pages (preprints, documentation)
 ├── scripts/                     # Utility scripts + R code
 ├── quality_reports/             # Plans, session logs, merge reports
 ├── explorations/                # Research sandbox (see rules)
 ├── templates/                   # Session log, quality report templates
-└── master_supporting_docs/      # Papers and existing slides
+└── master_supporting_docs/      # Reference papers and materials
 ```
 
 ---
@@ -46,17 +43,23 @@
 ## Commands
 
 ```bash
-# LaTeX (3-pass, XeLaTeX only)
-cd Slides && TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-BIBINPUTS=..:$BIBINPUTS bibtex file
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
+# Compile manuscript (pdflatex, 3-pass + bibtex)
+cd papers/[slug]/manuscript && pdflatex main.tex
+bibtex main
+pdflatex main.tex
+pdflatex main.tex
 
-# Deploy Quarto to GitHub Pages
-./scripts/sync_to_docs.sh LectureN
+# Compile response letter
+cd papers/[slug]/responses && pdflatex response_letter.tex
+
+# Draft reviewer response
+/reviewer-response papers/[slug]
+
+# Validate bibliography
+/validate-bib
 
 # Quality score
-python scripts/quality_score.py Quarto/file.qmd
+python scripts/quality_score.py papers/[slug]/responses/response_draft.md
 ```
 
 ---
@@ -65,8 +68,7 @@ python scripts/quality_score.py Quarto/file.qmd
 
 | Score | Gate | Meaning |
 |-------|------|---------|
-| 80 | Commit | Good enough to save |
-| 90 | PR | Ready for deployment |
+| 90 | Commit | Publication-ready (high bar) |
 | 95 | Excellence | Aspirational |
 
 ---
@@ -75,26 +77,17 @@ python scripts/quality_score.py Quarto/file.qmd
 
 | Command | What It Does |
 |---------|-------------|
-| `/compile-latex [file]` | 3-pass XeLaTeX + bibtex |
-| `/deploy [LectureN]` | Render Quarto + sync to docs/ |
-| `/extract-tikz [LectureN]` | TikZ → PDF → SVG |
-| `/proofread [file]` | Grammar/typo/overflow review |
-| `/visual-audit [file]` | Slide layout audit |
-| `/pedagogy-review [file]` | Narrative, notation, pacing review |
-| `/review-r [file]` | R code quality review |
-| `/qa-quarto [LectureN]` | Adversarial Quarto vs Beamer QA |
-| `/slide-excellence [file]` | Combined multi-agent review |
-| `/translate-to-quarto [file]` | Beamer → Quarto translation |
+| `/reviewer-response [paper-dir]` | Draft point-by-point reviewer response |
+| `/review-paper [file]` | Manuscript review |
 | `/validate-bib` | Cross-reference citations |
-| `/devils-advocate` | Challenge slide design |
-| `/create-lecture` | Full lecture creation |
-| `/commit [msg]` | Stage, commit, PR, merge |
+| `/proofread [file]` | Grammar/typo/overflow review |
 | `/lit-review [topic]` | Literature search + synthesis |
 | `/research-ideation [topic]` | Research questions + strategies |
 | `/interview-me [topic]` | Interactive research interview |
-| `/review-paper [file]` | Manuscript review |
-| `/reviewer-response [paper-dir]` | Draft point-by-point reviewer response |
 | `/data-analysis [dataset]` | End-to-end R analysis |
+| `/review-r [file]` | R code quality review |
+| `/compile-latex [file]` | 3-pass pdflatex + bibtex |
+| `/commit [msg]` | Stage, commit, PR, merge |
 | `/learn [skill-name]` | Extract discovery into persistent skill |
 | `/context-status` | Show session health + context usage |
 | `/deep-audit` | Repository-wide consistency audit |

@@ -1,69 +1,56 @@
 ---
 paths:
   - "Figures/**/*"
-  - "Quarto/**/*.qmd"
-  - "Slides/**/*.tex"
+  - "papers/**"
 ---
 
 # Single Source of Truth: Enforcement Protocol
 
-**The Beamer `.tex` file is the authoritative source for ALL content.** Everything else is derived.
+**The manuscript `.tex` file is the authoritative source for ALL content.** Reviewer responses derive from it (read-only).
 
 ## The SSOT Chain
 
 ```
-Beamer .tex (SOURCE OF TRUTH)
-  ├── extract_tikz.tex → PDF → SVGs (derived)
-  ├── Quarto .qmd → HTML (derived)
-  ├── Bibliography_base.bib (shared)
-  └── Figures/LectureN/*.rds → plotly charts (data source)
+Manuscript .tex (SOURCE OF TRUTH)
+  ├── Reviewer comments (input)
+  ├── Response draft .md (derived, read-only from manuscript)
+  ├── Response letter .tex (derived)
+  ├── Bibliography refs.bib or Bibliography_base.bib (shared)
+  └── Figures/ (referenced, not modified)
 
-NEVER edit derived artifacts independently.
-ALWAYS propagate changes from source → derived.
+NEVER edit manuscript from response workflow.
+ALWAYS read manuscript as authoritative source.
 ```
 
 ---
 
-## TikZ Freshness Protocol (MANDATORY)
+## Response Drafting Protocol (MANDATORY)
 
-**Before using ANY TikZ SVG in a Quarto slide, verify it matches the current Beamer source.**
+**When drafting reviewer responses, the manuscript is read-only.**
 
-### Diff-Check Procedure
+### Reference Verification Procedure
 
-1. Read the TikZ block from the Beamer `.tex` file
-2. Read the corresponding block from `Figures/LectureN/extract_tikz.tex`
-3. Compare EVERY coordinate, label, color, opacity, and anchor point
-4. If ANY difference exists: update `extract_tikz.tex` from Beamer, recompile, regenerate SVGs
-5. Only then reference the SVG in the QMD
+1. Read the manuscript `.tex` file to find exact page/line/equation numbers
+2. Quote manuscript text verbatim when referencing changes
+3. Verify all citations exist in bibliography
+4. Never assume page numbers — always check PDF
+5. Never modify manuscript during response drafting
 
-### When to Re-Extract
+### When to Update Manuscript
 
-Re-extract ALL TikZ diagrams when:
-- The Beamer `.tex` file has been modified since last extraction
-- Starting a new Quarto translation
-- Any TikZ-related quality issue is reported
-- Before any commit that includes QMD changes
-
----
-
-## Environment Parity (MANDATORY)
-
-**Every Beamer environment MUST have a CSS equivalent before translation begins.**
-
-1. Scan the Beamer source for all custom environments
-2. Check each against your theme SCSS file
-3. If ANY environment is missing from SCSS, create it BEFORE translating
+Update manuscript ONLY when:
+- User explicitly requests manuscript changes
+- After response is approved and changes are finalized
+- Never automatically during response drafting
 
 ---
 
 ## Content Fidelity Checklist
 
 ```
-[ ] Frame count: Beamer frames == Quarto slides
-[ ] Math check: every equation appears with identical notation
-[ ] Citation check: every \cite has a @key in Quarto
-[ ] Environment check: every Beamer box has CSS equivalent
-[ ] Figure check: every \includegraphics has SVG or plotly equivalent
-[ ] No added content: Quarto does not invent slides not in Beamer
-[ ] No dropped content: every Beamer idea appears in Quarto
+[ ] All reviewer points addressed (count matches)
+[ ] All manuscript references are exact (page/line/equation)
+[ ] All citations resolve in bibliography
+[ ] No manuscript modifications during response drafting
+[ ] Response tone is professional and collegial
 ```

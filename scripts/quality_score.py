@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 """
-Quality Scoring System for Academic Course Materials
+Quality Scoring System for HEP Papers and Reviewer Responses
 
 Calculates objective quality scores (0-100) based on defined rubrics.
-Enforces quality gates: 80 (commit), 90 (PR), 95 (excellence).
+Enforces quality gates: 90 (commit), 95 (excellence).
 
 Usage:
-    python scripts/quality_score.py Quarto/Lecture6_Topic.qmd
-    python scripts/quality_score.py Quarto/Lecture6_Topic.qmd --summary
-    python scripts/quality_score.py Quarto/*.qmd
-    python scripts/quality_score.py Slides/Lecture01_Topic.tex
-    python scripts/quality_score.py scripts/R/Lecture06_simulations.R
+    python scripts/quality_score.py papers/my-paper/responses/response_draft.md
+    python scripts/quality_score.py papers/my-paper/manuscript/main.tex
+    python scripts/quality_score.py scripts/R/analysis.R
 """
 
 import sys
@@ -79,8 +77,24 @@ BEAMER_RUBRIC = {
     }
 }
 
+HEP_RESPONSE_RUBRIC = {
+    'critical': {
+        'physics_error': {'points': 30},
+        'reviewer_point_not_addressed': {'points': 20},
+        'broken_citation': {'points': 15},
+    },
+    'major': {
+        'wrong_page_line_reference': {'points': 10},
+        'missing_citation': {'points': 5},
+        'notation_inconsistency': {'points': 3},
+    },
+    'minor': {
+        'typo': {'points': 2},
+    }
+}
+
 THRESHOLDS = {
-    'commit': 80,
+    'commit': 90,  # High bar for HEP papers
     'pr': 90,
     'excellence': 95
 }
@@ -548,6 +562,53 @@ class QualityScorer:
         self.score = max(0, self.score)
         return self._generate_report()
 
+    def score_hep_response(self) -> Dict:
+        """Score HEP reviewer response markdown files."""
+        content = self.filepath.read_text(encoding='utf-8')
+
+        # Check for broken citations (INSPIRE format)
+        # Look for citation patterns like [Author:YYYYid]
+        inspire_pattern = r'\[([A-Za-z]+:\d{4}[a-z]{3})\]'
+        cited_keys = set(re.findall(inspire_pattern, content))
+
+        # Check against bibliography (if exists)
+        bib_file = self.filepath.parent.parent.parent / 'Bibliography_base.bib'
+        if not bib_file.exists():
+            bib_file = self.filepath.parent.parent / 'manuscript' / 'refs.bib'
+
+        if bib_file.exists() and cited_keys:
+            bib_content = bib_file.read_text(encoding='utf-8')
+            bib_keys = set(re.findall(r'@\w+\{([^,]+),', bib_content))
+            broken = cited_keys - bib_keys
+            for key in broken:
+                self.issues['critical'].append({
+                    'type': 'broken_citation',
+                    'description': f'Citation key not in bibliography: {key}',
+                    'details': 'Add to bibliography or fix INSPIRE key',
+                    'points': 15
+                })
+                self.score -= 15
+
+        # Check for common typos
+        typo_patterns = [
+            (r'\bthe\s+the\b', 'Duplicate "the"'),
+            (r'\ba\s+a\b', 'Duplicate "a"'),
+            (r'\s{2,}', 'Multiple spaces'),
+        ]
+        for pattern, desc in typo_patterns:
+            matches = list(re.finditer(pattern, content, re.IGNORECASE))
+            for _ in matches:
+                self.issues['minor'].append({
+                    'type': 'typo',
+                    'description': desc,
+                    'details': 'Fix typo',
+                    'points': 2
+                })
+                self.score -= 2
+
+        self.score = max(0, self.score)
+        return self._generate_report()
+
     def _generate_report(self) -> Dict:
         """Generate quality score report."""
         if self.auto_fail:
@@ -731,6 +792,8 @@ Exit Codes:
                 report = scorer.score_r_script()
             elif filepath.suffix == '.tex':
                 report = scorer.score_beamer()
+            elif filepath.suffix == '.md' and 'papers/' in str(filepath):
+                report = scorer.score_hep_response()
             else:
                 print(f"Error: Unsupported file type: {filepath.suffix}")
                 continue

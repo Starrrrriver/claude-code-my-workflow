@@ -1,7 +1,6 @@
 ---
 paths:
-  - "Slides/**/*.tex"
-  - "Quarto/**/*.qmd"
+  - "papers/**"
   - "docs/**"
 ---
 
@@ -9,27 +8,21 @@ paths:
 
 **At the end of EVERY task, Claude MUST verify the output works correctly.** This is non-negotiable.
 
-## For Quarto/HTML Slides:
-1. Run `./scripts/sync_to_docs.sh` (or `./scripts/sync_to_docs.sh LectureN`) to render and deploy
-2. Open the HTML in browser: `open docs/slides/LectureX.html` (macOS) or `xdg-open` (Linux)
-3. Verify images display by reading 2-3 image files to confirm valid content
-4. Check HTML source for correct image paths
-5. Check for overflow by scanning dense slides
-6. Verify environment parity: every Beamer box environment has a CSS equivalent in the QMD
+## For HEP Papers & Responses (papers/**):
+1. Compile response_letter.tex successfully: `cd papers/[slug]/responses && pdflatex response_letter.tex`
+2. Verify all reviewer points addressed (count matches)
+3. Check all manuscript change references are correct (page/line/equation numbers)
+4. Run hep-domain-reviewer agent for substantive review
+5. Verify bibliography citations resolve
+6. Open PDF to verify formatting: `open response_letter.pdf` (macOS) or `xdg-open` (Linux)
 7. Report verification results
 
-## For LaTeX/Beamer Slides:
-1. Compile with xelatex and check for errors
-2. Open the PDF to verify figures render (`open` on macOS, `xdg-open` on Linux)
-3. Check for overfull hbox warnings
-
-## For TikZ Diagrams in HTML/Quarto:
-1. Browsers **cannot** display PDF images inline — ALWAYS convert to SVG
-2. Use SVG (vector format) for crisp rendering: `pdf2svg input.pdf output.svg`
+## For TikZ Diagrams in Papers:
+1. Compile TikZ to PDF: `pdflatex diagram.tex`
+2. Convert to SVG if needed for web: `pdf2svg input.pdf output.svg`
 3. **NEVER use PNG for diagrams** — PNG is raster and looks blurry
 4. Verify SVG files contain valid XML/SVG markup
-5. Copy SVGs to `docs/Figures/LectureX/` via `sync_to_docs.sh`
-6. **Freshness check:** Before using any TikZ SVG, verify extract_tikz.tex matches current Beamer source
+5. Copy to Figures/ directory
 
 ## For R Scripts:
 1. Run `Rscript scripts/R/filename.R`
@@ -37,10 +30,10 @@ paths:
 3. Spot-check estimates for reasonable magnitude
 
 ## Common Pitfalls:
-- **PDF images in HTML**: Browsers don't render PDFs inline → convert to SVG
-- **Relative paths**: `../Figures/` works from `Quarto/` but not from `docs/slides/` → use `sync_to_docs.sh`
+- **Missing reviewer points**: Always count and verify all points addressed
+- **Wrong references**: Page/line/equation numbers must match manuscript exactly
+- **Broken citations**: Verify all INSPIRE keys resolve
 - **Assuming success**: Always verify output files exist AND contain correct content
-- **Stale TikZ SVGs**: extract_tikz.tex diverges from Beamer source → always diff-check
 
 ## Verification Checklist:
 ```

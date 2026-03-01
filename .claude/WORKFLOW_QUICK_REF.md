@@ -43,20 +43,23 @@ Repeat
 
 | Score | Action |
 |-------|--------|
-| >= 80 | Ready to commit |
-| < 80  | Fix blocking issues |
+| >= 90 | Ready to commit (high bar for publication) |
+| < 90  | Fix blocking issues |
 
 ---
 
-## Non-Negotiables (Customize These)
+## Non-Negotiables (HEP Conventions)
 
-<!-- Replace with YOUR project's locked-in preferences -->
+<!-- HEP-specific conventions — see .claude/rules/hep-paper-standards.md -->
 
-- [YOUR PATH CONVENTION] (e.g., `here::here()` for R, relative paths for LaTeX)
-- [YOUR SEED CONVENTION] (e.g., `set.seed()` once at top for stochastic code)
-- [YOUR FIGURE STANDARDS] (e.g., white bg, 300 DPI, custom theme)
-- [YOUR COLOR PALETTE] (e.g., institutional colors)
-- [YOUR TOLERANCE THRESHOLDS] (e.g., 1e-6 for point estimates)
+- **INSPIRE citation format:** `Author:YYYYidentifier` (e.g., `CMS:2023abc`, `Cacciari:2008gp`)
+- **Uncertainty reporting:** `N ± stat ± syst` — always separate; luminosity separate
+- **Manuscript is authoritative:** Read-only for responses; never modify during response drafting
+- **All reviewer points addressed:** No skipping; count must match
+- **Page/line/equation references:** Must be exact; verify against PDF
+- **Jet algorithm:** Anti-kt; always state radius parameter (e.g., `anti-$k_t$, $R=0.4$`)
+- **Units:** Roman text in math mode; use `hepunits` package (`\GeV`, `\TeV`, `\fb`)
+- **Limits:** Always 95% CL, CLs method, obs + exp ± 1σ, ± 2σ
 
 ---
 
@@ -64,7 +67,9 @@ Repeat
 
 <!-- Fill in as you discover your working style -->
 
-**Visual:** [How you want figures/plots handled]
+**Response tone:** Professional and collegial
+**Citation verification:** Always check INSPIRE keys resolve
+**Change log:** Complete table at end of response
 **Reporting:** [Concise bullets? Detailed prose? Details on request?]
 **Session logs:** Always (post-plan, incremental, end-of-session)
 **Replication:** [How strict? Flag near-misses?]

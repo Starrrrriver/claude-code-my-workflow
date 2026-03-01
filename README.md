@@ -1,11 +1,10 @@
-# My Claude Code Setup
+# HEP Reviewer Response Workflow with Claude Code
 
-> **Work in progress.** This is not meant to be a polished guide for everyone. It's mostly a summary of how I've been using Claude Code for academic work — slides, papers, data analysis, and more. I keep learning new things, and as I do, I keep updating these files. This is just a way for me to share what I've figured out with friends and colleagues.
+> **Work in progress.** This is a fork of pedrohcgs/claude-code-my-workflow adapted for **HEP (High Energy Physics) research papers and reviewer response drafting**. The original workflow was designed for lecture slides; this version focuses on publication-ready "Response to Reviewers" documents for journals like PRL, JHEP, PRD, PLB, and EPJC.
 
-**Live site:** [psantanna.com/claude-code-my-workflow](https://psantanna.com/claude-code-my-workflow/)
-**Last Updated:** 2026-02-27
+**Last Updated:** 2026-03-01
 
-A ready-to-fork foundation for AI-assisted academic work. You describe what you want — lecture slides, a research paper, a data analysis, a replication package — and Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results. Like a contractor who handles the entire job. Extracted from a production PhD course and extended by a growing [community](#community--extensions).
+A ready-to-fork foundation for AI-assisted HEP paper workflows. You describe what you need — draft a reviewer response, review a manuscript, validate citations — and Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results. Like a contractor who handles the entire job.
 
 ---
 
@@ -31,7 +30,7 @@ claude
 
 Then paste the [starter prompt](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-first-session) from the guide, filling in your project details:
 
-> I am starting to work on **[PROJECT NAME]** in this repo. **[Describe your project in 2–3 sentences.]** I've set up the Claude Code academic workflow... Please read the configuration files and adapt them for my project. Enter plan mode and start.
+> I am starting to work on **[PAPER NAME]** in this repo. **[Describe your HEP paper in 2–3 sentences: experiment, analysis, journal target.]** I've set up the Claude Code HEP workflow... Please read the configuration files and adapt them for my project. Enter plan mode and start.
 
 The [full guide](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#sec-first-session) has the complete starter prompt with all the details.
 
@@ -47,25 +46,23 @@ You describe a task. For complex or ambiguous requests, Claude first creates a r
 
 ### Specialized Agents
 
-Instead of one general-purpose reviewer, 10 focused agents each check one dimension:
+Instead of one general-purpose reviewer, focused agents each check one dimension:
 
+- **hep-domain-reviewer** — HEP-specific physics correctness, citation completeness, claim-evidence alignment
 - **proofreader** — grammar/typos
-- **slide-auditor** — visual layout
-- **pedagogy-reviewer** — teaching quality
-- **r-reviewer** — R code quality
-- **domain-reviewer** — field-specific correctness (template — customize for your field)
+- **r-reviewer** — R code quality (for data analysis)
+- **tikz-reviewer** — TikZ diagram visual critique (for figures)
 
-Each is better at its narrow task than a generalist would be. The `/slide-excellence` skill runs them all in parallel. The same pattern extends to any academic artifact — manuscripts, data pipelines, proposals.
+Each is better at its narrow task than a generalist would be. The same pattern extends to any academic artifact — manuscripts, data pipelines, proposals.
 
 ### Adversarial QA
 
-Two agents work in opposition: the **critic** reads both Beamer and Quarto and produces harsh findings. The **fixer** implements exactly what the critic found. They loop until the critic says "APPROVED" (or 5 rounds max). This catches errors that single-pass review misses.
+The **hep-domain-reviewer** agent provides substantive review of physics correctness, assumption transparency, citation completeness, and claim-evidence alignment. It catches errors that single-pass review misses.
 
 ### Quality Gates
 
 Every file gets a score (0–100). Scores below threshold block the action:
-- **80** — commit threshold
-- **90** — PR threshold
+- **90** — commit threshold (high bar for publication-ready responses)
 - **95** — excellence (aspirational)
 
 ### Context Survival
@@ -93,11 +90,10 @@ It covers:
 
 | Academic Task | How This Workflow Helps |
 |---------------|----------------------|
-| Lecture slides (Beamer/Quarto) | Full creation, translation, multi-agent review, deployment |
-| Research papers | Literature review, manuscript review, simulated peer review |
+| Reviewer responses | Point-by-point response drafting with HEP-specific review |
+| Research papers | Manuscript review, citation validation, physics correctness |
 | Data analysis | End-to-end R pipelines, replication verification, publication-ready output |
-| Replication packages | AEA-compliant packaging, reproducibility audit trails |
-| Presentations | Rhetoric of decks principles, visual audit, cognitive load review |
+| Literature review | Structured search, synthesis, and gap identification |
 | Research proposals | Structured drafting with adversarial critique |
 
 ---
@@ -105,20 +101,16 @@ It covers:
 ## What's Included
 
 <details>
-<summary><strong>10 agents, 22 skills, 18 rules, 7 hooks</strong> (click to expand)</summary>
+<summary><strong>6 agents, 14 skills, 15 rules, 7 hooks</strong> (click to expand)</summary>
 
 ### Agents (`.claude/agents/`)
 
 | Agent | What It Does |
 |-------|-------------|
+| `hep-domain-reviewer` | HEP-specialized domain reviewer for manuscripts and responses |
 | `proofreader` | Grammar, typos, overflow, consistency review |
-| `slide-auditor` | Visual layout audit (overflow, font consistency, spacing) |
-| `pedagogy-reviewer` | 13-pattern pedagogical review (narrative arc, notation density, pacing) |
 | `r-reviewer` | R code quality, reproducibility, and domain correctness |
 | `tikz-reviewer` | Merciless TikZ diagram visual critique |
-| `beamer-translator` | Beamer-to-Quarto translation specialist |
-| `quarto-critic` | Adversarial QA comparing Quarto against Beamer benchmark |
-| `quarto-fixer` | Implements fixes from the critic agent |
 | `verifier` | End-to-end task completion verification |
 | `domain-reviewer` | **Template** for your field-specific substance reviewer |
 
@@ -126,24 +118,16 @@ It covers:
 
 | Skill | What It Does |
 |-------|-------------|
-| `/compile-latex` | 3-pass XeLaTeX compilation with bibtex |
-| `/deploy` | Render Quarto + sync to GitHub Pages |
-| `/extract-tikz` | TikZ diagrams to PDF to SVG pipeline |
-| `/proofread` | Launch proofreader on a file |
-| `/visual-audit` | Launch slide-auditor on a file |
-| `/pedagogy-review` | Launch pedagogy-reviewer on a file |
-| `/review-r` | Launch R code reviewer |
-| `/qa-quarto` | Adversarial critic-fixer loop (max 5 rounds) |
-| `/slide-excellence` | Combined multi-agent review |
-| `/translate-to-quarto` | Full 11-phase Beamer-to-Quarto translation |
+| `/reviewer-response` | Draft point-by-point reviewer response for HEP papers |
+| `/review-paper` | Manuscript review: structure, physics, referee objections |
 | `/validate-bib` | Cross-reference citations against bibliography |
-| `/devils-advocate` | Challenge design decisions before committing |
-| `/create-lecture` | Full lecture creation workflow |
+| `/proofread` | Launch proofreader on a file |
+| `/compile-latex` | 3-pass pdflatex compilation with bibtex |
+| `/review-r` | Launch R code reviewer |
 | `/commit` | Stage, commit, create PR, and merge to main |
 | `/lit-review` | Literature search, synthesis, and gap identification |
 | `/research-ideation` | Generate research questions and empirical strategies |
 | `/interview-me` | Interactive interview to formalize a research idea |
-| `/review-paper` | Manuscript review: structure, econometrics, referee objections |
 | `/data-analysis` | End-to-end R analysis with publication-ready output |
 | `/learn` | Extract non-obvious discoveries into persistent skills |
 | `/context-status` | Show session health and context usage |
@@ -178,17 +162,16 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 
 | Rule | Triggers On | What It Enforces |
 |------|------------|-----------------|
-| `verification-protocol` | `.tex`, `.qmd`, `docs/` | Task completion checklist |
-| `single-source-of-truth` | `Figures/`, `.tex`, `.qmd` | No content duplication; Beamer is authoritative |
-| `quality-gates` | `.tex`, `.qmd`, `*.R` | 80/90/95 scoring + tolerance thresholds |
+| `verification-protocol` | `papers/**`, `docs/` | Task completion checklist for HEP papers |
+| `single-source-of-truth` | `Figures/`, `papers/**` | Manuscript is authoritative; responses are read-only |
+| `quality-gates` | `papers/**/*.tex`, `papers/**/*.md`, `*.R` | 90/95 scoring for publication-ready work |
+| `hep-paper-standards` | `papers/**` | HEP conventions: INSPIRE citations, uncertainty reporting, jet algorithms |
 | `r-code-conventions` | `*.R` | R coding standards + math line-length exception |
 | `tikz-visual-quality` | `.tex` | TikZ diagram visual standards |
-| `beamer-quarto-sync` | `.tex`, `.qmd` | Auto-sync Beamer edits to Quarto |
 | `pdf-processing` | `master_supporting_docs/` | Safe large PDF handling |
-| `proofreading-protocol` | `.tex`, `.qmd`, `quality_reports/` | Propose-first, then apply with approval |
-| `no-pause-beamer` | `.tex` | No overlay commands in Beamer |
+| `proofreading-protocol` | `.tex`, `.md`, `quality_reports/` | Propose-first, then apply with approval |
 | `replication-protocol` | `*.R` | Replicate original results before extending |
-| `knowledge-base-template` | `.tex`, `.qmd`, `*.R` | Notation/application registry template |
+| `knowledge-base-template` | `.tex`, `*.R` | Notation/application registry template |
 | `orchestrator-research` | `*.R`, `explorations/` | Simple orchestrator for research (no multi-round reviews) |
 | `exploration-folder-protocol` | `explorations/` | Structured sandbox for experimental work |
 | `exploration-fast-track` | `explorations/` | Lightweight exploration workflow (60/100 threshold) |
@@ -199,11 +182,10 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 |----------|-------------|
 | `session-log.md` | Structured session logging format |
 | `quality-report.md` | Merge-time quality report format |
-| `exploration-readme.md` | Exploration project README template |
-| `archive-readme.md` | Archive documentation template |
 | `requirements-spec.md` | MUST/SHOULD/MAY requirements framework with clarity status |
 | `constitutional-governance.md` | Template for defining non-negotiable principles vs. preferences |
 | `skill-template.md` | Academic skill creation template with domain-specific examples |
+| `reviewer-response-template.md` | HEP-aware reviewer response template |
 
 </details>
 
@@ -214,10 +196,8 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | Tool | Required For | Install |
 |------|-------------|---------|
 | [Claude Code](https://code.claude.com/docs/en/overview) | Everything | `npm install -g @anthropic-ai/claude-code` |
-| XeLaTeX | LaTeX compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
-| [Quarto](https://quarto.org) | Web slides | [quarto.org/docs/get-started](https://quarto.org/docs/get-started/) |
-| R | Figures & analysis | [r-project.org](https://www.r-project.org/) |
-| pdf2svg | TikZ to SVG | `brew install pdf2svg` (macOS) |
+| pdflatex | LaTeX compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
+| R | Data analysis | [r-project.org](https://www.r-project.org/) |
 | [gh CLI](https://cli.github.com/) | PR workflow | `brew install gh` (macOS) |
 
 Not all tools are needed — install only what your project uses. Claude Code is the only hard requirement.
@@ -227,12 +207,11 @@ Not all tools are needed — install only what your project uses. Claude Code is
 ## Adapting for Your Field
 
 1. **Fill in the knowledge base** (`.claude/rules/knowledge-base-template.md`) with your notation, applications, and design principles
-2. **Customize the domain reviewer** (`.claude/agents/domain-reviewer.md`) with review lenses specific to your field
-3. **Update the color palette** in your Quarto theme SCSS file — change the color variables at the top
+2. **Customize the domain reviewer** (`.claude/agents/domain-reviewer.md`) with review lenses specific to your field (or use `hep-domain-reviewer.md` as a model)
+3. **Add field-specific conventions** to `.claude/rules/hep-paper-standards.md` (or create your own standards file)
 4. **Add field-specific R pitfalls** to `.claude/rules/r-code-conventions.md`
-5. **Fill in the lecture mapping** in `.claude/rules/beamer-quarto-sync.md`
-6. **Customize the workflow quick reference** (`.claude/WORKFLOW_QUICK_REF.md`) with your non-negotiables and preferences
-7. **Set up the exploration folder** (`explorations/`) for experimental work
+5. **Customize the workflow quick reference** (`.claude/WORKFLOW_QUICK_REF.md`) with your non-negotiables and preferences
+6. **Set up the exploration folder** (`explorations/`) for experimental work
 
 ---
 
@@ -245,7 +224,7 @@ Not all tools are needed — install only what your project uses. Claude Code is
 
 ## Origin
 
-This infrastructure was extracted from **Econ 730: Causal Panel Data** at Emory University, developed by Pedro Sant'Anna using Claude Code over 6+ sessions. The course produced 6 complete PhD lecture decks with 800+ slides, interactive Quarto versions with plotly charts, and full R replication packages — all managed through this multi-agent workflow. The patterns are domain-agnostic: the same agents, rules, and orchestrator work for any academic project.
+This infrastructure is a fork of **[pedrohcgs/claude-code-my-workflow](https://github.com/pedrohcgs/claude-code-my-workflow)**, originally developed for lecture slides and extended for HEP research papers and reviewer response drafting. The original workflow was extracted from Econ 730: Causal Panel Data at Emory University. This fork adapts the multi-agent workflow for HEP paper workflows, focusing on publication-ready "Response to Reviewers" documents for journals like PRL, JHEP, PRD, PLB, and EPJC.
 
 ---
 

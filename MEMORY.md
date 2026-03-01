@@ -9,6 +9,8 @@ When a mistake is corrected, append a `[LEARN:category]` entry below.
 
 ## Workflow Patterns
 
+[LEARN:workflow] 2026-03-01: Adapted academic workflow from lecture-focused (Slides/, Quarto/, Beamer) to HEP reviewer response-focused (papers/, manuscript/, responses/). Removed lecture-specific skills and agents. Quality threshold raised to 90/100 for publication-ready responses. Primary skill: /reviewer-response. HEP-specific infrastructure preserved: hep-domain-reviewer agent, hep-paper-standards rule, INSPIRE citation format.
+
 [LEARN:workflow] Requirements specification phase catches ambiguity before planning → reduces rework 30-50%. Use spec-then-plan for complex/ambiguous tasks (>1 hour or >3 files).
 
 [LEARN:workflow] Spec-then-plan protocol: AskUserQuestion (3-5 questions) → create `quality_reports/specs/YYYY-MM-DD_description.md` with MUST/SHOULD/MAY requirements → declare clarity status (CLEAR/ASSUMED/BLOCKED) → get approval → then draft plan.
